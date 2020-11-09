@@ -22,10 +22,14 @@ def function2(point):
 
 
 def gradient(point, function):
+    x = point[0]
+    y = point[1]
+
     dx = 0.0000001
+    df_dx = (function([x + dx, y]) - function([x, y])) / dx
+
     dy = 0.0000001
-    df_dx = (function([point[0] + dx, point[1]]) - function([point[0], point[1]])) / dx
-    df_dy = (function([point[0], point[1] + dy]) - function([point[0], point[1]])) / dy
+    df_dy = (function([x, y + dy]) - function([x, y])) / dy
     result = math.sqrt(df_dx**2 + df_dy**2)
     return round(result, 2)
 
@@ -52,8 +56,8 @@ def gradient_optimization_one_dim(function):
 # найти точку минимуму для функции $x_1^2\cos(x_2) + 0.05x_2^3 + 3x_1^3\log_2{x_2^2}$.
 # Зафиксировать параметр $\epsilon = 0.001$, начальные значения весов принять равным [4, 10].
 # Выполнить 50 итераций градиентного спуска. Ответ округлить до второго знака
-def function4(x, y):
-    return (x**2) * math.cos(y) + 0.05 * (y**3) + 3 * (x**3) * math.log(y**2, 2)
+def function4(point):
+    return (point[0]**2) * math.cos(point[1]) + 0.05 * (point[1]**3) + 3 * (point[0]**3) * math.log(point[1]**2, 2)
 
 
 def gradient_optimization_multi_dim(function):
@@ -63,8 +67,8 @@ def gradient_optimization_multi_dim(function):
     dy = 0.000001
     epsilon = 0.001
     for step in range(50):
-        df_dx = (function(x + dx, y) - function(x, y)) / dx
-        df_dy = (function(x, y + dy) - function(x, y)) / dy
+        df_dx = (function([x + dx, y]) - function([x, y])) / dx
+        df_dy = (function([x, y + dy]) - function([x, y])) / dy
         x = x - epsilon * df_dx
         y = y - epsilon * df_dy
     return [x, y]
