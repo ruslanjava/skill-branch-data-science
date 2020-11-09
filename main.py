@@ -17,15 +17,15 @@ def derivation(x, function):
 
 # Задание 2:
 # посчитать значение градиента функции $x_1^2\cos(x_2) + 0.05x_2^3 + 3x_1^3\log_2{x_2^2}$ в точке $(10, 1)$.
-def function2(x, y):
-    return (x**2) * math.cos(y) + 0.05 * (y**3) + 3*(x**3) * math.log(y**2, 2)
+def function2(point):
+    return (point[0]**2) * math.cos(point[1]) + 0.05 * (point[1]**3) + 3*(point[0]**3) * math.log(point[1]**2, 2)
 
 
 def gradient(point, function):
     dx = 0.0000001
     dy = 0.0000001
-    df_dx = (function(point[0] + dx, point[1]) - function(point[0], point[1])) / dx
-    df_dy = (function(point[0], point[1] + dy) - function(point[0], point[1])) / dy
+    df_dx = (function([point[0] + dx, point[1]]) - function([point[0], point[1]])) / dx
+    df_dy = (function([point[0], point[1] + dy]) - function([point[0], point[1]])) / dy
     result = math.sqrt(df_dx**2 + df_dy**2)
     return round(result, 2)
 
