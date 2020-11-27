@@ -1,4 +1,5 @@
 import math
+import numpy
 
 
 # Задание 1:
@@ -23,17 +24,23 @@ def function2(point):
     return (x**2) * math.cos(y) + 0.05 * (x**3) + 3*(x**3) * math.log(y**2, 2)
 
 
-def gradient(point, function):
+def gradient_internal(point, function):
     x = point[0]
     y = point[1]
     fxy = function([x, y])
 
-    dx = 0.000001
+    dx = 0.00001
     df_dx = (function([x + dx, y]) - fxy) / dx
-    dy = 0.000001
+
+    dy = 0.00001
     df_dy = (function([x, y + dy]) - fxy) / dy
 
-    return [round(df_dx, 2), round(df_dy, 2)]
+    return [df_dx, df_dy]
+
+
+def gradient(point, function):
+    g = gradient_internal(point, function)
+    return [round(g[0], 2), round(g[1], 2)]
 
 
 # Задание 3:
@@ -46,7 +53,7 @@ def function3(x):
 
 def gradient_optimization_one_dim(function):
     x = 10
-    dx = 0.000001
+    dx = 0.00001
     epsilon = 0.001
     for step in range(50):
         df = (function(x + dx) - function(x)) / dx
@@ -59,20 +66,21 @@ def gradient_optimization_one_dim(function):
 # Зафиксировать параметр $\epsilon = 0.001$, начальные значения весов принять равным [4, 10].
 # Выполнить 50 итераций градиентного спуска. Ответ округлить до второго знака
 def function4(point):
-    return (point[0]**2) * math.cos(point[1]) + 0.05 * (point[1]**3) + 3 * (point[0]**3) * math.log(point[1]**2, 2)
+    x = point[0]
+    y = point[1]
+    xx = x**2
+    yy = y**2
+    return xx * math.cos(y) + 0.05 * (yy * y) + 3 * (xx * x) * math.log(yy, 2)
 
 
 def gradient_optimization_multi_dim(function):
     x = 4
     y = 10
-    dx = 0.000001
-    dy = 0.000001
     epsilon = 0.001
     for step in range(50):
-        df_dx = (function([x + dx, y]) - function([x, y])) / dx
-        df_dy = (function([x, y + dy]) - function([x, y])) / dy
-        x = x - epsilon * df_dx
-        y = y - epsilon * df_dy
+        g = gradient([x, y], function)
+        x = x - round(epsilon * g[0], 2)
+        y = y - round(epsilon * g[1], 2)
     x = round(x, 2)
     y = round(y, 2)
     return [x, y]
