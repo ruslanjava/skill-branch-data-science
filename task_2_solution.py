@@ -27,9 +27,9 @@ def calculate_target_ratio(x, target_name):
 # написать функцию `calculate_data_dtypes`, которая принимает на вход датафрейм `X` и возвращает количество числовых
 # признаков и категориальных признаков. Категориальные признаки имеют тип `object`.
 def calculate_data_dtypes(x):
-    uniqueTypes = x.dtypes.unique()
-    result = np.intersect1d(uniqueTypes, [np.dtype('float64'), np.dtype('int64'), np.dtype('object')])
-    return result.size
+    ints = x.select_dtypes(include=['float64', 'int64']).dtypes.count()
+    objects = x.select_dtypes(include=['object']).dtypes.count()
+    return [ints, objects]
 
 
 # Задание 5
@@ -55,11 +55,8 @@ def calculate_mean_price_in_new_housing(x):
     return round(mean)
 
 
-# df = pd.read_csv('housing_market.csv')
-# print(calculate_data_shape(df))
-# print(take_columns(df))
-# print(calculate_target_ratio(df, 'full_sq'))
-# print(calculate_data_dtypes(df))
-# print(calculate_cheap_apartment(df))
-# print(calculate_squad_in_cheap_apartment(df))
-# print(calculate_mean_price_in_new_housing(df))
+df = pd.read_csv('housing_market.csv')
+print(calculate_data_dtypes(df))
+print(calculate_cheap_apartment(df))
+print(calculate_squad_in_cheap_apartment(df))
+print(calculate_mean_price_in_new_housing(df))
