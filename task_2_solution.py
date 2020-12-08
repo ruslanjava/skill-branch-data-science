@@ -36,7 +36,7 @@ def calculate_data_dtypes(x):
 # написать функцию `calculate_cheap_apartment`, которая принимает на вход датафрейм `X` и возвращает количество квартир,
 # стоимость которых меньше 1 млн. рублей.
 def calculate_cheap_apartment(x):
-    return x[x['price_doc'] < 1000000]['price_doc'].count()
+    return x[x['price_doc'] <= 1000000]['price_doc'].count()
 
 
 # Задание 6
@@ -44,7 +44,8 @@ def calculate_cheap_apartment(x):
 # площадь квартир, стоимость которых меньше 1 млн .рублей. Признак, отвечающий за площадь - `full_sq`. Ответ округлить
 # целого значения.
 def calculate_squad_in_cheap_apartment(x):
-    return x[x['price_doc'] < 1000000]['full_sq'].mean()
+    mean = x[x['price_doc'] <= 1000000]['full_sq'].mean()
+    return round(mean)
 
 
 # Задание 7
@@ -52,11 +53,10 @@ def calculate_squad_in_cheap_apartment(x):
 # среднюю стоимость трехкомнатных квартир в доме, который не страше 2010 года. Ответ округлить до целого значения.
 def calculate_mean_price_in_new_housing(x):
     mean = x[(x['num_room'] == 3) & (x['build_year'] >= 2010)]['price_doc'].mean()
-    return round(mean)
+    return int(mean)
 
 
 #df = pd.read_csv('housing_market.csv')
-#print(calculate_data_dtypes(df))
 #print(calculate_cheap_apartment(df))
 #print(calculate_squad_in_cheap_apartment(df))
 #print(calculate_mean_price_in_new_housing(df))
