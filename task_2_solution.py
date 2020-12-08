@@ -55,8 +55,8 @@ def calculate_mean_price_in_new_housing(x):
     return round(mean)
 
 
-df = pd.read_csv('housing_market.csv')
-print(calculate_data_dtypes(df))
-print(calculate_cheap_apartment(df))
-print(calculate_squad_in_cheap_apartment(df))
-print(calculate_mean_price_in_new_housing(df))
+#df = pd.read_csv('housing_market.csv')
+#print(calculate_data_dtypes(df))
+#print(calculate_cheap_apartment(df))
+#print(calculate_squad_in_cheap_apartment(df))
+#print(calculate_mean_price_in_new_housing(df))
