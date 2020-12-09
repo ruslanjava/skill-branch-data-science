@@ -53,7 +53,7 @@ def calculate_squad_in_cheap_apartment(x):
 # среднюю стоимость трехкомнатных квартир в доме, который не страше 2010 года. Ответ округлить до целого значения.
 def calculate_mean_price_in_new_housing(x):
     mean = x[(x['num_room'] == 3) & (x['build_year'] >= 2010)]['price_doc'].mean()
-    return int(mean)
+    return round(mean)
 
 
 # Задание 8
@@ -68,9 +68,8 @@ def calculate_mean_squared_by_num_rooms(x):
 # максимальную и минимальную площадь квартир в зависимости от материала изготовления дома. Каждое значение площади
 # округлить до 2-го знака.
 def calculate_squared_stats_by_material(x):
-    min = np.round(x.groupby(by='material')['full_sq'].min(), 2)
-    max = np.round(x.groupby(by='material')['full_sq'].max(), 2)
-    return pd.concat([min, max], axis=1)
+    pivot_table = pd.pivot_table(x, index=['material'], values='full_sq', aggfunc=[np.min, np.max])
+    return np.round(pivot_table, 2)
 
 
 # Задание 10
@@ -79,14 +78,10 @@ def calculate_squared_stats_by_material(x):
 # район города (признак - `sub_area`), столбцы - цель покупки (признак - `product_type`).
 # Каждое значение цены округлить до 2-го знака, пропуски заполнить нулем.
 def calculate_crosstab(x):
-    pivot_table = pd.pivot_table(x, index=['sub_area'], columns='product_type', values='price_doc', aggfunc=[np.min, np.max], fill_value=0)
+    pivot_table = pd.pivot_table(x, index=['sub_area', 'product_type'], values='price_doc', aggfunc=[np.min, np.max], fill_value=0)
     return np.round(pivot_table, 2)
 
 
 #df = pd.read_csv('housing_market.csv')
-#print(calculate_cheap_apartment(df))
-#print(calculate_squad_in_cheap_apartment(df))
-#print(calculate_mean_price_in_new_housing(df))
-#print(calculate_mean_squared_by_num_rooms(df))
 #print(calculate_squared_stats_by_material(df))
 #print(calculate_crosstab(df))
