@@ -79,7 +79,7 @@ def calculate_squared_stats_by_material(x):
 # район города (признак - `sub_area`), столбцы - цель покупки (признак - `product_type`).
 # Каждое значение цены округлить до 2-го знака, пропуски заполнить нулем.
 def calculate_crosstab(x):
-    pivot_table = pd.pivot_table(df, index=['sub_area'], columns='product_type', values='price_doc', aggfunc=[np.min, np.max], fill_value=0)
+    pivot_table = pd.pivot_table(x, index=['sub_area'], columns='product_type', values='price_doc', aggfunc=[np.min, np.max], fill_value=0)
     return np.round(pivot_table, 2)
 
 
