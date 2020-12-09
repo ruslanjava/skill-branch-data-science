@@ -83,10 +83,10 @@ def calculate_crosstab(x):
     return np.round(pivot_table, 2)
 
 
-df = pd.read_csv('housing_market.csv')
-print(calculate_cheap_apartment(df))
-print(calculate_squad_in_cheap_apartment(df))
-print(calculate_mean_price_in_new_housing(df))
-print(calculate_mean_squared_by_num_rooms(df))
-print(calculate_squared_stats_by_material(df))
-print(calculate_crosstab(df))
+#df = pd.read_csv('housing_market.csv')
+#print(calculate_cheap_apartment(df))
+#print(calculate_squad_in_cheap_apartment(df))
+#print(calculate_mean_price_in_new_housing(df))
+#print(calculate_mean_squared_by_num_rooms(df))
+#print(calculate_squared_stats_by_material(df))
+#print(calculate_crosstab(df))
