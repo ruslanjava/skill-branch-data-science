@@ -96,5 +96,5 @@ def calculate_crosstab(x):
     return round(cross_table, 2)
 
 
-df = pd.read_csv('housing_market.csv')
-print(calculate_crosstab(df))
+#df = pd.read_csv('housing_market.csv')
+#print(calculate_crosstab(df))
