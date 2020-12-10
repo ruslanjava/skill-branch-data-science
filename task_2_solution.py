@@ -90,7 +90,7 @@ def custom_agg(x):
 # район города (признак - `sub_area`), столбцы - цель покупки (признак - `product_type`).
 # Каждое значение цены округлить до 2-го знака, пропуски заполнить нулем.
 def calculate_crosstab(x):
-    cross_table = pd.crosstab(x.sub_area, columns=x.product_type, values=x.price_doc, aggfunc=max).fillna(0)
+    cross_table = pd.crosstab(x.sub_area, columns=x.product_type, values=x.price_doc, aggfunc=np.mean).fillna(0)
     cross_table = cross_table.reset_index().drop('sub_area', 1)
     print(cross_table.columns)
     return round(cross_table, 2)
