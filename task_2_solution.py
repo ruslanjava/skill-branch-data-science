@@ -91,9 +91,10 @@ def custom_agg(x):
 # Каждое значение цены округлить до 2-го знака, пропуски заполнить нулем.
 def calculate_crosstab(x):
     cross_table = pd.crosstab(x.sub_area, columns=x.product_type, values=x.price_doc, aggfunc=max).fillna(0)
+    cross_table = cross_table.reset_index().drop('sub_area', 1)
     print(cross_table.columns)
     return round(cross_table, 2)
 
 
-#df = pd.read_csv('housing_market.csv')
-#print(calculate_crosstab(df))
+df = pd.read_csv('housing_market.csv')
+print(calculate_crosstab(df))
