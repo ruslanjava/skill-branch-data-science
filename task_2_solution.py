@@ -83,13 +83,10 @@ def calculate_squared_stats_by_material(x):
 # Каждое значение цены округлить до 2-го знака, пропуски заполнить нулем.
 def calculate_crosstab(x):
     pivot_table = pd.pivot_table(
-        x, index=['sub_area'], columns=['product_type'], values=['price_doc'],
-        aggfunc={'price_doc': [np.min]}, fill_value=0, dropna=True
+        x, index='sub_area', columns=['product_type'], values='price_doc', fill_value=0, dropna=True
     )
-    print(pivot_table.shape)
     return np.round(pivot_table, 2)
 
 
 #df = pd.read_csv('housing_market.csv')
-#print(calculate_squared_stats_by_material(df))
 #print(calculate_crosstab(df))
