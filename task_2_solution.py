@@ -77,9 +77,11 @@ def calculate_squared_stats_by_material(x):
 
 
 def custom_agg(x):
-    min_val = round(np.min(x), 2)
-    max_val = round(np.max(x), 2)
-    return '{0} {1}'.format(min_val, max_val)
+    min_val = round(x.min(), 2)
+    max_val = round(x.max(), 2)
+    return [min_val, max_val]
+    # return format(min_val, '.2f') + ' ' + format(max_val, '.2f')
+    #return x.max()
 
 
 # Задание 10
@@ -89,8 +91,9 @@ def custom_agg(x):
 # Каждое значение цены округлить до 2-го знака, пропуски заполнить нулем.
 def calculate_crosstab(x):
     cross_table = pd.crosstab(x.sub_area, columns=x.product_type, values=x.price_doc, aggfunc=custom_agg).fillna(0)
-    return cross_table
+    print(cross_table.columns)
+    return round(cross_table, 2)
 
 
-#df = pd.read_csv('housing_market.csv')
-#print(calculate_crosstab(df))
+# df = pd.read_csv('housing_market.csv')
+# print(calculate_crosstab(df))
