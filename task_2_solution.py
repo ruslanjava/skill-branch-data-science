@@ -68,7 +68,11 @@ def calculate_mean_squared_by_num_rooms(x):
 # максимальную и минимальную площадь квартир в зависимости от материала изготовления дома. Каждое значение площади
 # округлить до 2-го знака.
 def calculate_squared_stats_by_material(x):
-    pivot_table = pd.pivot_table(x, index=['material'], values='full_sq', aggfunc=[np.min, np.max])
+    pivot_table = pd.pivot_table(
+        x, index=['material'], values='full_sq',
+        aggfunc={'full_sq': [np.max, np.min]}
+    )
+    print(pivot_table.columns)
     return np.round(pivot_table, 2)
 
 
@@ -78,10 +82,14 @@ def calculate_squared_stats_by_material(x):
 # район города (признак - `sub_area`), столбцы - цель покупки (признак - `product_type`).
 # Каждое значение цены округлить до 2-го знака, пропуски заполнить нулем.
 def calculate_crosstab(x):
-    pivot_table = pd.pivot_table(x, index=['sub_area', 'product_type'], values='price_doc', aggfunc=[np.min, np.max], fill_value=0)
+    pivot_table = pd.pivot_table(
+        x, index=['sub_area'], columns=['product_type'], values=['price_doc'],
+        aggfunc={'price_doc': [np.min]}, fill_value=0, dropna=True
+    )
+    print(pivot_table.shape)
     return np.round(pivot_table, 2)
 
 
-#df = pd.read_csv('housing_market.csv')
-#print(calculate_squared_stats_by_material(df))
-#print(calculate_crosstab(df))
+df = pd.read_csv('housing_market.csv')
+print(calculate_squared_stats_by_material(df))
+print(calculate_crosstab(df))
