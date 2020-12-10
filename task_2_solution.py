@@ -76,17 +76,21 @@ def calculate_squared_stats_by_material(x):
     return np.round(pivot_table, 2)
 
 
+def custom_agg(x):
+    min_val = round(np.min(x), 2)
+    max_val = round(np.max(x), 2)
+    return '{0} {1}'.format(min_val, max_val)
+
+
 # Задание 10
 # написать функцию `calculate_crosstab`, которая принимает на вход датафрейм X и возвращает максимальную и
 # минимальную стоимость квартир в зависимости от района города и цели покупки. Ответ - сводная таблица, где индекс -
 # район города (признак - `sub_area`), столбцы - цель покупки (признак - `product_type`).
 # Каждое значение цены округлить до 2-го знака, пропуски заполнить нулем.
 def calculate_crosstab(x):
-    pivot_table = pd.pivot_table(
-        x, index='sub_area', columns=['product_type'], values='price_doc', fill_value=0, dropna=True
-    )
-    return np.round(pivot_table, 2)
+    cross_table = pd.crosstab(x.sub_area, columns=x.product_type, values=x.price_doc, aggfunc=custom_agg).fillna(0)
+    return cross_table
 
 
-#df = pd.read_csv('housing_market.csv')
-#print(calculate_crosstab(df))
+df = pd.read_csv('housing_market.csv')
+print(calculate_crosstab(df))
