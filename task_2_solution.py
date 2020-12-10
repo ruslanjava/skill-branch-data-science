@@ -90,6 +90,6 @@ def calculate_crosstab(x):
     return np.round(pivot_table, 2)
 
 
-df = pd.read_csv('housing_market.csv')
-print(calculate_squared_stats_by_material(df))
-print(calculate_crosstab(df))
+#df = pd.read_csv('housing_market.csv')
+#print(calculate_squared_stats_by_material(df))
+#print(calculate_crosstab(df))
