@@ -13,7 +13,23 @@ def split_data_into_two_samples(x):
     return [x_train, x_test]
 
 
-#df = pd.read_csv('train.csv')
-#split = split_data_into_two_samples(df)
-#print(split[0].head())
-#print(split[1].head())
+# Задание 2.
+# продолжим выполнение предварительной подготовки данных: в данных много категориальных признаков
+# (они представлены типами `object`), пока мы с ними работать не умеем, поэтому удалим их из датафрейма.
+# Кроме того, для обучения нам не нужна целевая переменная, ее нужно выделить в отдельный вектор (`price_doc`).
+# Написать функцию `prepare_data`, которая принимает датафрейм, удаляет категориальные признаки, удаляет `id`,
+# и выделяет целевую переменную в отдельный вектор.
+# Кроме того, некоторые признаки содержат пропуски, требуется удалить такие признаки.
+# Функция должна возвращать подготовленную матрицу признаков и вектор с целевой переменной.
+def prepare_data(x):
+    objects = x.select_dtypes(include=['object']).columns
+    filtered = x.drop(columns=objects)
+    filtered = filtered.drop(columns=["id"])
+    filtered = filtered.dropna()
+    target_vector = filtered['price_doc']
+    matrix = filtered.drop(columns=['price_doc'])
+    return [matrix, target_vector]
+
+
+#df = pd.read_csv('housing_market.csv')
+#print(prepare_data(df))
