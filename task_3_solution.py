@@ -43,8 +43,16 @@ def fit_first_linear_model(x, transformer):
     return transformer.transform(x)
 
 
+# Задание 4
+# объединить задание 2 и 3 в единую функцию `prepare_data_for_model`,
+# функция принимает датафрейм и трансформер для масштабирования,
+# возвращает данные в формате задания 3 и вектор целевой переменной.
+def prepare_data_for_model(x, transformer):
+    prepared = prepare_data(x)
+    scaled = fit_first_linear_model(prepared[0], transformer)
+    return [scaled, prepared[1]]
+
+
 #df = pd.read_csv('housing_market.csv')
-#df = prepare_data(df)
-#print(df[0])
-#print(fit_first_linear_model(df[0], MinMaxScaler()))
-#print(fit_first_linear_model(df[0], StandardScaler()))
+#df = prepare_data_for_model(df, MinMaxScaler())
+#print(df)
