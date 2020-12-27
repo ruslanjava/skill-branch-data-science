@@ -1,6 +1,8 @@
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import StandardScaler
 
 
 # Задание 1.
@@ -31,5 +33,18 @@ def prepare_data(x):
     return [matrix, target_vector]
 
 
+# Задание 3
+# Перед обучением линейной модели также необходимо масштабировать признаки.
+# Для этого мы можем использовать `MinMaxScaler` или `StandardScaler`.
+# Написать функцию, которая принимает на вход датафрейм и трансформем,
+# а возвращает датафрейм с отмасштабированными признаками.
+def fit_first_linear_model(x, transformer):
+    transformer.fit(x)
+    return transformer.transform(x)
+
+
 #df = pd.read_csv('housing_market.csv')
-#print(prepare_data(df))
+#df = prepare_data(df)
+#print(df[0])
+#print(fit_first_linear_model(df[0], MinMaxScaler()))
+#print(fit_first_linear_model(df[0], StandardScaler()))
