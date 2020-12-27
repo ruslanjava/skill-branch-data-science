@@ -103,10 +103,10 @@ def calculate_model_weights(linreg, names):
     return df
 
 
-df = pd.read_csv('housing_market.csv')
-splitted = split_data_into_two_samples(df)
-train = splitted[0]
-prepared = prepare_data(train)
-model = fit_first_linear_model(prepared[0], prepared[1])
-print(calculate_model_weights(model, prepared[0].columns))
+#df = pd.read_csv('housing_market.csv')
+#splitted = split_data_into_two_samples(df)
+#train = splitted[0]
+#prepared = prepare_data(train)
+#model = fit_first_linear_model(prepared[0], prepared[1])
+#print(calculate_model_weights(model, prepared[0].columns))
 
