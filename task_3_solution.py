@@ -39,7 +39,7 @@ def prepare_data(x):
 # Для этого мы можем использовать `MinMaxScaler` или `StandardScaler`.
 # Написать функцию, которая принимает на вход датафрейм и трансформем,
 # а возвращает датафрейм с отмасштабированными признаками.
-def scale(x, transformer):
+def scale_data(x, transformer):
     transformer.fit(x)
     return transformer.transform(x)
 
@@ -50,7 +50,7 @@ def scale(x, transformer):
 # возвращает данные в формате задания 3 и вектор целевой переменной.
 def prepare_data_for_model(x, transformer):
     prepared = prepare_data(x)
-    scaled = scale(prepared[0], transformer)
+    scaled = scale_data(prepared[0], transformer)
     return [scaled, prepared[1]]
 
 
@@ -61,7 +61,7 @@ def prepare_data_for_model(x, transformer):
 # в качестве трансформера для преобразования данных использовать - `StandardScaler`.
 # Создать функцию `fit_first_linear_model`, которая принимает на вход `x_train` и `y_train`, а возвращает модельку.
 def fit_first_linear_model(x_train, y_train):
-    x_train_2 = scale(x_train, StandardScaler())
+    x_train_2 = scale_data(x_train, StandardScaler())
     model = LinearRegression(2, 200)
     model.fit(x_train_2, y_train)
     return model
@@ -70,7 +70,7 @@ def fit_first_linear_model(x_train, y_train):
 # Задание 6.
 # выполнить задание 5, но с использованием `MinMaxScaler`.
 def fit_first_linear_model_2(x_train, y_train):
-    x_train_2 = scale(x_train, MinMaxScaler())
+    x_train_2 = scale_data(x_train, MinMaxScaler())
     model = LinearRegression(l_p_metric=2, num_epochs=200)
     model.fit(x_train_2, y_train)
     return model
