@@ -37,8 +37,7 @@ def prepare_data(x):
 # Написать функцию, которая принимает на вход датафрейм и трансформем,
 # а возвращает датафрейм с отмасштабированными признаками.
 def scale_data(x, transformer):
-    transformer.fit(x)
-    return transformer.transform(x)
+    return transformer.fit_transform(x)
 
 
 # Задание 4
@@ -47,8 +46,9 @@ def scale_data(x, transformer):
 # возвращает данные в формате задания 3 и вектор целевой переменной.
 def prepare_data_for_model(x, transformer):
     prepared = prepare_data(x)
-    scaled = scale_data(prepared[0], transformer)
-    return [scaled, prepared[1]]
+    scaled_array = scale_data(prepared[0], transformer)
+    scaled_df = pd.DataFrame(scaled_array, columns=prepared[0].columns)
+    return [scaled_df, prepared[1]]
 
 
 # Задание 5.
