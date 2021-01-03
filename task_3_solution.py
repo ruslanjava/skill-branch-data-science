@@ -83,7 +83,7 @@ def evaluate_model(linreg, x_test, y_test):
     mse = mean_squared_error(y_test, y_pred)
     mae = mean_absolute_error(y_test, y_pred)
     rmse = np.sqrt(mse)
-    return [mse.round(2), mae.round(2), rmse.round(2)]
+    return [mse, mae, rmse]
 
 
 # Задание 8
