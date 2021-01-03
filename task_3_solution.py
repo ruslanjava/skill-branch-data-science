@@ -25,13 +25,10 @@ def split_data_into_two_samples(x):
 # Кроме того, некоторые признаки содержат пропуски, требуется удалить такие признаки.
 # Функция должна возвращать подготовленную матрицу признаков и вектор с целевой переменной.
 def prepare_data(x):
+    target_vector = x['price_doc']
     objects = x.select_dtypes(include=['object']).columns
-    filtered = x.drop(columns=objects)
-    filtered = filtered.drop(columns=["id"])
-    filtered = filtered.dropna()
-    target_vector = filtered['price_doc']
-    matrix = filtered.drop(columns=['price_doc'])
-    return [matrix, target_vector]
+    filtered = x.drop(columns=objects).drop(columns=["id"]).drop(columns=['price_doc']).dropna(axis=1)
+    return [filtered, target_vector]
 
 
 # Задание 3
@@ -103,10 +100,5 @@ def calculate_model_weights(linreg, names):
     return df
 
 
-#df = pd.read_csv('housing_market.csv')
-#splitted = split_data_into_two_samples(df)
-#train = splitted[0]
-#prepared = prepare_data(train)
-#model = fit_first_linear_model(prepared[0], prepared[1])
-#print(calculate_model_weights(model, prepared[0].columns))
+
 
