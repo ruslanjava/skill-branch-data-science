@@ -35,6 +35,17 @@ def prepare_data(x):
     return [filtered, target_vector]
 
 
+def build_model(x, y, x_test, y_test):
+    x_train, x_valid, y_train, y_valid = train_test_split(x, y, test_size=0.3, random_state=1, shuffle=True)
+
+    model = LogisticRegression()
+    model.fit(x_train, y_train)
+    y_pred = model.predict(x_valid)
+    score1 = roc_auc_score(y_valid, y_pred)
+    y_test_pred = model.predict(x_test)
+    score2 = roc_auc_score(y_test_pred, y_test)
+    return [round(score1, 4), round(score2, 4)]
+
 # Задание 3
 # Начнем обучать модель и сравнивать их качество.
 # Основная схема будет выглядеть следующим образом - будем разбивать выборку `train` на обучение / контроль / тест,
@@ -55,14 +66,7 @@ def prepare_data(x):
 def fit_first_model(x, y, x_test, y_test):
     x = x.fillna(0)
     x_test = x_test.fillna(0)
-    x_train, x_valid, y_train, y_valid = train_test_split(x, y, test_size=0.3, random_state=1, shuffle=True)
-    model = LogisticRegression()
-    model.fit(x_train, y_train)
-    y_pred = model.predict(x_valid)
-    score1 = roc_auc_score(y_valid, y_pred)
-    y_test_pred = model.predict(x_test)
-    score2 = roc_auc_score(y_test_pred, y_test)
-    return [round(score1, 4), round(score2, 4)]
+    return build_model(x, y, x_test, y_test)
 
 
 # Задание 4
@@ -81,14 +85,7 @@ def fit_second_model(x, y, x_test, y_test):
     for column in columns:
         mean = x_test[column].mean()
         x_test = x_test.fillna(value={column: mean})
-    x_train, x_valid, y_train, y_valid = train_test_split(x, y, test_size=0.3, random_state=1, shuffle=True)
-    model = LogisticRegression()
-    model.fit(x_train, y_train)
-    y_pred = model.predict(x_valid)
-    score1 = roc_auc_score(y_valid, y_pred)
-    y_test_pred = model.predict(x_test)
-    score2 = roc_auc_score(y_test_pred, y_test)
-    return [round(score1, 4), round(score2, 4)]
+    return build_model(x, y, x_test, y_test)
 
 
 # Задание 5
@@ -104,14 +101,7 @@ def fit_third_model(x, y, x_test, y_test):
     for column in columns:
         median = x_test[column].median()
         x_test = x_test.fillna(value={column: median})
-    x_train, x_valid, y_train, y_valid = train_test_split(x, y, test_size=0.3, random_state=1, shuffle=True)
-    model = LogisticRegression()
-    model.fit(x_train, y_train)
-    y_pred = model.predict(x_valid)
-    score1 = roc_auc_score(y_valid, y_pred)
-    y_test_pred = model.predict(x_test)
-    score2 = roc_auc_score(y_test_pred, y_test)
-    return [round(score1, 4), round(score2, 4)]
+    return build_model(x, y, x_test, y_test)
 
 
 # Задание 6
@@ -125,15 +115,9 @@ def fit_fourth_model(x, y, x_test, y_test):
     x_scaled = pd.DataFrame(x_scaled_array, columns=x.columns)
 
     x_test = x_test.fillna(0)
-    x_train, x_valid, y_train, y_valid = train_test_split(x_scaled, y, test_size=0.3, random_state=1, shuffle=True)
-
-    model = LogisticRegression()
-    model.fit(x_train, y_train)
-    y_pred = model.predict(x_valid)
-    score1 = roc_auc_score(y_valid, y_pred)
-    y_test_pred = model.predict(x_test)
-    score2 = roc_auc_score(y_test_pred, y_test)
-    return [round(score1, 4), round(score2, 4)]
+    x_test_scaled_array = StandardScaler().fit_transform(x_test)
+    x_test_scaled = pd.DataFrame(x_test_scaled_array, columns=x_test.columns)
+    return build_model(x_scaled, y, x_test_scaled, y_test)
 
 
 def fit_fifth_model(x, y, x_test, y_test):
@@ -148,12 +132,38 @@ def fit_fifth_model(x, y, x_test, y_test):
     for column in columns:
         mean = x_test[column].mean()
         x_test = x_test.fillna(value={column: mean})
-    x_train, x_valid, y_train, y_valid = train_test_split(x_scaled, y, test_size=0.3, random_state=1, shuffle=True)
+    x_test_scaled_array = StandardScaler().fit_transform(x_test)
+    x_test_scaled = pd.DataFrame(x_test_scaled_array, columns=x_test.columns)
+    return build_model(x_scaled, y, x_test_scaled, y_test)
 
-    model = LogisticRegression()
-    model.fit(x_train, y_train)
-    y_pred = model.predict(x_valid)
-    score1 = roc_auc_score(y_valid, y_pred)
-    y_test_pred = model.predict(x_test)
-    score2 = roc_auc_score(y_test_pred, y_test)
-    return [round(score1, 4), round(score2, 4)]
+
+# Задание 7
+# Для масштабирования данные есть и другой инструмент - `MinMaxScaler`. Давай попробуем выполнить масштабирование
+# с помощью этого объекта и оценим качество модели. Выполнить задание 3 - функция `fit_sixth_model`
+# и задание 4 - функция `fit_seventh_model`.
+def fit_sixth_model(x, y, x_test, y_test):
+    x = x.fillna(0)
+    x_scaled_array = MinMaxScaler().fit_transform(x)
+    x_scaled = pd.DataFrame(x_scaled_array, columns=x.columns)
+
+    x_test = x_test.fillna(0)
+    x_test_scaled_array = MinMaxScaler().fit_transform(x_test)
+    x_test_scaled = pd.DataFrame(x_test_scaled_array, columns=x_test.columns)
+    return build_model(x_scaled, y, x_test_scaled, y_test)
+
+
+def fit_seventh_model(x, y, x_test, y_test):
+    columns = x.columns
+    for column in columns:
+        mean = x[column].mean()
+        x = x.fillna(value={column: mean})
+    x_scaled_array = MinMaxScaler().fit_transform(x)
+    x_scaled = pd.DataFrame(x_scaled_array, columns=x.columns)
+
+    columns = x_test.columns
+    for column in columns:
+        mean = x_test[column].mean()
+        x_test = x_test.fillna(value={column: mean})
+    x_test_scaled_array = MinMaxScaler().fit_transform(x_test)
+    x_test_scaled = pd.DataFrame(x_test_scaled_array, columns=x_test.columns)
+    return build_model(x_scaled, y, x_test_scaled, y_test)
