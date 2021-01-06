@@ -53,6 +53,34 @@ def prepare_data(x):
 # __Пример__:
 # `def fit_first_model(X, y, x_test, y_test) -> Tuple[float, float]:`
 def fit_first_model(x, y, x_test, y_test):
+    x = x.fillna(0)
+    x_test = x_test.fillna(0)
+    x_train, x_valid, y_train, y_valid = train_test_split(x, y, test_size=0.3, random_state=1, shuffle=True)
+    model = LogisticRegression()
+    model.fit(x_train, y_train)
+    y_pred = model.predict(x_valid)
+    score1 = roc_auc_score(y_valid, y_pred)
+    y_test_pred = model.predict(x_test)
+    score2 = roc_auc_score(y_test_pred, y_test)
+    return [round(score1, 4), round(score2, 4)]
+
+
+# Задание 4
+# мы обучили нашу первую модель, но почему мы используем заполнение пропусков 0? Давай попробуем заполнить
+# пропуски средним значением по каждому отдельному признаку и выполнить задание 3 еще раз. Среднее посчитать
+# по той выборке, которая используется для определенного действия (если обучение модели - то по обучающей,
+# если тестирование модели - то по тестовой). Функцию для этого задания, назовем `fit_second_model`.
+# Устно проанализируйте изменения качества модели, стала модель лучше? Если да, то почему? Этот анализ сделать устно,
+# ответы на эти вопросы сдавать автоматизированной системе не требуется.
+def fit_second_model(x, y, x_test, y_test):
+    columns = x.columns
+    for column in columns:
+        mean = x[column].mean()
+        x = x.fillna(value={column: mean})
+    columns = x_test.columns
+    for column in columns:
+        mean = x_test[column].mean()
+        x_test = x_test.fillna(value={column: mean})
     x_train, x_valid, y_train, y_valid = train_test_split(x, y, test_size=0.3, random_state=1, shuffle=True)
     model = LogisticRegression()
     model.fit(x_train, y_train)
