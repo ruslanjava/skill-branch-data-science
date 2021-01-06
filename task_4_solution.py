@@ -89,3 +89,26 @@ def fit_second_model(x, y, x_test, y_test):
     y_test_pred = model.predict(x_test)
     score2 = roc_auc_score(y_test_pred, y_test)
     return [round(score1, 4), round(score2, 4)]
+
+
+# Задание 5
+# В задании на линейную регрессию, мы говорили, что среднее - статистика, которая сильно зависит от выбросов,
+# она ориентируется на выбросы. А вот медиана - статистика, которая более устойчива к выбросам.
+# Обработаем пропуски медианой, и выполним задание 3. Функцию назовем `fit_third_model`.
+def fit_third_model(x, y, x_test, y_test):
+    columns = x.columns
+    for column in columns:
+        median = x[column].median()
+        x = x.fillna(value={column: median})
+    columns = x_test.columns
+    for column in columns:
+        median = x_test[column].median()
+        x_test = x_test.fillna(value={column: median})
+    x_train, x_valid, y_train, y_valid = train_test_split(x, y, test_size=0.3, random_state=1, shuffle=True)
+    model = LogisticRegression()
+    model.fit(x_train, y_train)
+    y_pred = model.predict(x_valid)
+    score1 = roc_auc_score(y_valid, y_pred)
+    y_test_pred = model.predict(x_test)
+    score2 = roc_auc_score(y_test_pred, y_test)
+    return [round(score1, 4), round(score2, 4)]
