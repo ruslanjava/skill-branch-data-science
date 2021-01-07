@@ -213,11 +213,10 @@ def find_best_split(x, y, x_test, y_test):
 # между валидационной и тестовой выборкой минимально, и значение метрики на тесте не меньше 76.
 # Написать функцию `choose_best_split`, которая принимает результаты расчетов в задании 7 и возвращает размер
 # валидационной выборки для наилучшего разбиения
-def choose_best_split(x, y, x_test, y_test):
-    df = find_best_split(x, y, x_test, y_test)
+def choose_best_split(scores):
     best_test_size = -1
     best_diff = 0
-    for index, row in df.iterrows():
+    for index, row in scores.iterrows():
         score1 = row['score1']
         score2 = row['score2']
         diff = (score1 - score2)**2
