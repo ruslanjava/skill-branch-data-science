@@ -18,9 +18,9 @@ def calculate_data_stats(x):
     shape = x.shape
     ints = x.select_dtypes(include=['float64', 'int64']).dtypes.count()
     objects = x.select_dtypes(include=['object']).dtypes.count()
-    is_fraud_positive = x[x['isFraud'] == True].count()
+    is_fraud_positive = x[x['isFraud'] == True]['isFraud'].count()
     is_fraud_total = x['isFraud'].count()
-    fraud_share = (is_fraud_positive / is_fraud_total).round(2)
+    fraud_share = (is_fraud_positive * 100 / is_fraud_total).round(2)
     return [shape, ints, objects, fraud_share]
 
 
