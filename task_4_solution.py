@@ -184,7 +184,7 @@ def find_best_split(x, y, x_test, y_test):
     scores1 = []
     scores2 = []
 
-    for test_size in np.arange(0.1, 0.9, 0.1):
+    for test_size in np.arange(0.1, 1.0, 0.1):
         columns = x.columns
         x2 = x.copy()
         for column in columns:
@@ -201,7 +201,7 @@ def find_best_split(x, y, x_test, y_test):
         x_test_scaled_array = MinMaxScaler().fit_transform(x2_test)
         x_test_scaled = pd.DataFrame(x_test_scaled_array, columns=columns)
 
-        score1, score2 = build_model(x_scaled, y, x_test_scaled, y_test)
+        score1, score2 = build_model(x_scaled, y, x_test_scaled, y_test, test_size)
         test_sizes.append(test_size)
         scores1.append(score1)
         scores2.append(score2)
