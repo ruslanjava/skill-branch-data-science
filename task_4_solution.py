@@ -35,10 +35,10 @@ def prepare_data(x):
     return [filtered, target_vector]
 
 
-def build_model(x, y, x_test, y_test, test_size=0.3):
-    x_train, x_valid, y_train, y_valid = train_test_split(x, y, test_size=test_size, random_state=1, shuffle=True)
+def build_model(x, y, x_test, y_test, split):
+    x_train, x_valid, y_train, y_valid = train_test_split(x, y, test_size=split, random_state=1, shuffle=True)
 
-    model = LogisticRegression()
+    model = LogisticRegression(random_state=1)
     model.fit(x_train, y_train)
     y_pred = model.predict(x_valid)
     score1 = roc_auc_score(y_valid, y_pred)
@@ -64,9 +64,9 @@ def build_model(x, y, x_test, y_test, test_size=0.3):
 # __Пример__:
 # `def fit_first_model(X, y, x_test, y_test) -> Tuple[float, float]:`
 def fit_first_model(x, y, x_test, y_test):
-    x = x.fillna(0)
-    x_test = x_test.fillna(0)
-    return build_model(x, y, x_test, y_test)
+    x2 = x.fillna(0)
+    x2_test = x_test.fillna(0)
+    return build_model(x2, y, x2_test, y_test, 0.3)
 
 
 # Задание 4
@@ -85,7 +85,7 @@ def fit_second_model(x, y, x_test, y_test):
     for column in columns:
         mean = x_test[column].mean()
         x_test = x_test.fillna(value={column: mean})
-    return build_model(x, y, x_test, y_test)
+    return build_model(x, y, x_test, y_test, 0.3)
 
 
 # Задание 5
@@ -101,7 +101,7 @@ def fit_third_model(x, y, x_test, y_test):
     for column in columns:
         median = x_test[column].median()
         x_test = x_test.fillna(value={column: median})
-    return build_model(x, y, x_test, y_test)
+    return build_model(x, y, x_test, y_test, 0.3)
 
 
 # Задание 6
@@ -117,7 +117,7 @@ def fit_fourth_model(x, y, x_test, y_test):
     x_test = x_test.fillna(0)
     x_test_scaled_array = StandardScaler().fit_transform(x_test)
     x_test_scaled = pd.DataFrame(x_test_scaled_array, columns=x_test.columns)
-    return build_model(x_scaled, y, x_test_scaled, y_test)
+    return build_model(x_scaled, y, x_test_scaled, y_test, 0.3)
 
 
 def fit_fifth_model(x, y, x_test, y_test):
@@ -134,7 +134,7 @@ def fit_fifth_model(x, y, x_test, y_test):
         x_test = x_test.fillna(value={column: mean})
     x_test_scaled_array = StandardScaler().fit_transform(x_test)
     x_test_scaled = pd.DataFrame(x_test_scaled_array, columns=x_test.columns)
-    return build_model(x_scaled, y, x_test_scaled, y_test)
+    return build_model(x_scaled, y, x_test_scaled, y_test, 0.3)
 
 
 # Задание 7
@@ -149,7 +149,7 @@ def fit_sixth_model(x, y, x_test, y_test):
     x_test = x_test.fillna(0)
     x_test_scaled_array = MinMaxScaler().fit_transform(x_test)
     x_test_scaled = pd.DataFrame(x_test_scaled_array, columns=x_test.columns)
-    return build_model(x_scaled, y, x_test_scaled, y_test)
+    return build_model(x_scaled, y, x_test_scaled, y_test, 0.3)
 
 
 def fit_seventh_model(x, y, x_test, y_test):
@@ -166,7 +166,7 @@ def fit_seventh_model(x, y, x_test, y_test):
         x_test = x_test.fillna(value={column: mean})
     x_test_scaled_array = MinMaxScaler().fit_transform(x_test)
     x_test_scaled = pd.DataFrame(x_test_scaled_array, columns=x_test.columns)
-    return build_model(x_scaled, y, x_test_scaled, y_test)
+    return build_model(x_scaled, y, x_test_scaled, y_test, 0.3)
 
 
 # Задание 8

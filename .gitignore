@@ -1,6 +1,7 @@
 /.idea
 /venv
 assignment2_fraud_train.csv
+assignment2_fraud_test.csv
 housing_market.csv
 train.csv
 test_task3.py
