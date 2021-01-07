@@ -35,8 +35,8 @@ def prepare_data(x):
     return [filtered, target_vector]
 
 
-def build_model(x, y, x_test, y_test):
-    x_train, x_valid, y_train, y_valid = train_test_split(x, y, test_size=0.3, random_state=1, shuffle=True)
+def build_model(x, y, x_test, y_test, test_size=0.3):
+    x_train, x_valid, y_train, y_valid = train_test_split(x, y, test_size=test_size, random_state=1, shuffle=True)
 
     model = LogisticRegression()
     model.fit(x_train, y_train)
@@ -167,3 +167,66 @@ def fit_seventh_model(x, y, x_test, y_test):
     x_test_scaled_array = MinMaxScaler().fit_transform(x_test)
     x_test_scaled = pd.DataFrame(x_test_scaled_array, columns=x_test.columns)
     return build_model(x_scaled, y, x_test_scaled, y_test)
+
+
+# Задание 8
+# Отлично, мы провели ряд экспериментов с разными подходами к подготовки данных.
+# Теперь поэкспериментируем с разным разбиением исходной выборки на обучающую и валидационную часть,
+# и поймем какая комбинация является оптимальной. Написать функцию `find_best_split`, которая принимает
+# те же аргументы, что и функции, реализованные в заданиях выше, в теле функции произвести разбиения,
+# начиная с 10/90 и заканчивая 90/10 с шагом 10. При каждом разбиении оценить качество на валидационной выборке
+# и выборке `x_test`. Функция должна возвращать датафрейм, с 3-мя столбцами: размер валидационной выборки,
+# оценка качества модели на валидационной выборке, оценка качества модели на тестовой выборке.
+# Пропуски заполнить медианой, для масштабирования использовать `MinMaxScaler()`.
+# Разбение выборок производить с `random_state = 1, shuffle=True`. Проанализировать поведение модели при разных разбиения.
+def find_best_split(x, y, x_test, y_test):
+    test_sizes = []
+    scores1 = []
+    scores2 = []
+
+    for test_size in np.arange(0.1, 0.9, 0.1):
+        columns = x.columns
+        x2 = x.copy()
+        for column in columns:
+            median = x2[column].median()
+            x2 = x2.fillna(value={column: median})
+        x_scaled_array = MinMaxScaler().fit_transform(x2)
+        x_scaled = pd.DataFrame(x_scaled_array, columns=columns)
+
+        x2_test = x_test.copy()
+        columns = x2_test.columns
+        for column in columns:
+            median = x2_test[column].median()
+            x2_test = x2_test.fillna(value={column: median})
+        x_test_scaled_array = MinMaxScaler().fit_transform(x2_test)
+        x_test_scaled = pd.DataFrame(x_test_scaled_array, columns=columns)
+
+        score1, score2 = build_model(x_scaled, y, x_test_scaled, y_test)
+        test_sizes.append(test_size)
+        scores1.append(score1)
+        scores2.append(score2)
+    return pd.DataFrame({'Test_sizes': test_sizes, 'Score1': scores1, 'Score2': scores2})
+
+
+# Задание 9
+# Какое разбиение является оптимальным? Оптимальное разбиение - то разбиение, при котором разница в метрике качества
+# между валидационной и тестовой выборкой минимально, и значение метрики на тесте не меньше 76.
+# Написать функцию `choose_best_split`, которая принимает результаты расчетов в задании 7 и возвращает размер
+# валидационной выборки для наилучшего разбиения
+def choose_best_split(x, y, x_test, y_test):
+    df = find_best_split(x, y, x_test, y_test)
+    best_test_size = -1
+    best_diff = 0
+    for index, row in df.iterrows():
+        score1 = row['score1']
+        score2 = row['score2']
+        diff = (score1 - score2)**2
+
+        if best_test_size == -1:
+            best_test_size = row['test_size']
+            best_diff = diff
+        else:
+            if diff < best_diff:
+                best_test_size = row['test_size']
+                best_diff = diff
+    return best_test_size
