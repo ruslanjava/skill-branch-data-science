@@ -8,6 +8,9 @@ from sklearn.metrics import mean_absolute_error, mean_squared_error
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import roc_auc_score, roc_curve
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import precision_score, recall_score
+from sklearn.pipeline import Pipeline
 
 
 # Задание 1
@@ -35,16 +38,20 @@ def prepare_data(x):
     return [filtered, target_vector]
 
 
-def build_model(x, y, x_test, y_test, split):
-    x_train, x_valid, y_train, y_valid = train_test_split(x, y, test_size=split, random_state=1, shuffle=True)
+def build_model(x, y, x_test, y_test, split=0.3):
+    x_train, x_valid = train_test_split(x, train_size=split, shuffle=True, random_state=1)
+    y_train, y_valid = train_test_split(y, train_size=split, shuffle=True, random_state=1)
 
     model = LogisticRegression(random_state=1)
     model.fit(x_train, y_train)
-    y_pred = model.predict(x_valid)
+    y_pred = model.predict_proba(x_valid)[:, 1]
     score1 = roc_auc_score(y_valid, y_pred)
-    y_test_pred = model.predict(x_test)
-    score2 = roc_auc_score(y_test_pred, y_test)
+
+    y_test_pred = model.predict_proba(x_test)[:, 1]
+    score2 = roc_auc_score(y_test, y_test_pred)
+
     return [round(score1, 4), round(score2, 4)]
+
 
 # Задание 3
 # Начнем обучать модель и сравнивать их качество.
@@ -66,7 +73,7 @@ def build_model(x, y, x_test, y_test, split):
 def fit_first_model(x, y, x_test, y_test):
     x2 = x.fillna(0)
     x2_test = x_test.fillna(0)
-    return build_model(x2, y, x2_test, y_test, 0.3)
+    return build_model(x2, y, x2_test, y_test)
 
 
 # Задание 4
@@ -78,14 +85,17 @@ def fit_first_model(x, y, x_test, y_test):
 # ответы на эти вопросы сдавать автоматизированной системе не требуется.
 def fit_second_model(x, y, x_test, y_test):
     columns = x.columns
+    x2 = x.copy()
     for column in columns:
-        mean = x[column].mean()
-        x = x.fillna(value={column: mean})
+        mean = x2[column].mean()
+        x2 = x2.fillna(value={column: mean})
     columns = x_test.columns
+    x_test2 = x_test.copy()
     for column in columns:
-        mean = x_test[column].mean()
-        x_test = x_test.fillna(value={column: mean})
-    return build_model(x, y, x_test, y_test, 0.3)
+        mean = x_test2[column].mean()
+        x_test2 = x_test2.fillna(value={column: mean})
+
+    return build_model(x2, y, x_test2, y_test)
 
 
 # Задание 5
@@ -101,7 +111,7 @@ def fit_third_model(x, y, x_test, y_test):
     for column in columns:
         median = x_test[column].median()
         x_test = x_test.fillna(value={column: median})
-    return build_model(x, y, x_test, y_test, 0.3)
+    return build_model(x, y, x_test, y_test)
 
 
 # Задание 6
@@ -109,15 +119,27 @@ def fit_third_model(x, y, x_test, y_test):
 # Давай попробуем отмасштабировать данные с помощью `StandardScaler`.
 # Для удобства, можно создать единый пайплайн, который и предобработает данные, и обучит модель логистической регрессии.
 # Выполнить задание 3 - функция `fit_fourth_model` и задание 4 - функция `fit_fifth_model`.
+def check_pipeline(x, y, x_test, y_test, pipeline, split=0.3):
+    x_train, x_valid = train_test_split(x, train_size=split, shuffle=True, random_state=1)
+    y_train, y_valid = train_test_split(y, train_size=split, shuffle=True, random_state=1)
+    pipeline.fit(x_train, y_train)
+    score1 = roc_auc_score(y_train, pipeline.predict_proba(x_train)[:, 1])
+    score2 = roc_auc_score(y_test, pipeline.predict_proba(x_test)[:, 1])
+    return [round(score1, 4), round(score2, 4)]
+
+
 def fit_fourth_model(x, y, x_test, y_test):
     x = x.fillna(0)
-    x_scaled_array = StandardScaler().fit_transform(x)
-    x_scaled = pd.DataFrame(x_scaled_array, columns=x.columns)
-
     x_test = x_test.fillna(0)
-    x_test_scaled_array = StandardScaler().fit_transform(x_test)
-    x_test_scaled = pd.DataFrame(x_test_scaled_array, columns=x_test.columns)
-    return build_model(x_scaled, y, x_test_scaled, y_test, 0.3)
+
+    pipeline = Pipeline(memory=None,
+             steps=[
+                 ('scaling', StandardScaler()),
+                 ('model', LogisticRegression(random_state=1))
+             ],
+             verbose=False
+    )
+    return check_pipeline(x, y, x_test, y_test, pipeline)
 
 
 def fit_fifth_model(x, y, x_test, y_test):
@@ -125,16 +147,19 @@ def fit_fifth_model(x, y, x_test, y_test):
     for column in columns:
         mean = x[column].mean()
         x = x.fillna(value={column: mean})
-    x_scaled_array = StandardScaler().fit_transform(x)
-    x_scaled = pd.DataFrame(x_scaled_array, columns=x.columns)
 
     columns = x_test.columns
     for column in columns:
         mean = x_test[column].mean()
         x_test = x_test.fillna(value={column: mean})
-    x_test_scaled_array = StandardScaler().fit_transform(x_test)
-    x_test_scaled = pd.DataFrame(x_test_scaled_array, columns=x_test.columns)
-    return build_model(x_scaled, y, x_test_scaled, y_test, 0.3)
+    pipeline = Pipeline(memory=None,
+                        steps=[
+                            ('scaling', StandardScaler()),
+                            ('model', LogisticRegression(random_state=1))
+                        ],
+                        verbose=False
+                        )
+    return check_pipeline(x, y, x_test, y_test, pipeline)
 
 
 # Задание 7
@@ -143,13 +168,15 @@ def fit_fifth_model(x, y, x_test, y_test):
 # и задание 4 - функция `fit_seventh_model`.
 def fit_sixth_model(x, y, x_test, y_test):
     x = x.fillna(0)
-    x_scaled_array = MinMaxScaler().fit_transform(x)
-    x_scaled = pd.DataFrame(x_scaled_array, columns=x.columns)
-
     x_test = x_test.fillna(0)
-    x_test_scaled_array = MinMaxScaler().fit_transform(x_test)
-    x_test_scaled = pd.DataFrame(x_test_scaled_array, columns=x_test.columns)
-    return build_model(x_scaled, y, x_test_scaled, y_test, 0.3)
+    pipeline = Pipeline(memory=None,
+                        steps=[
+                            ('scaling', MinMaxScaler()),
+                            ('model', LogisticRegression(random_state=1))
+                        ],
+                        verbose=False
+                        )
+    return check_pipeline(x, y, x_test, y_test, pipeline)
 
 
 def fit_seventh_model(x, y, x_test, y_test):
@@ -157,16 +184,20 @@ def fit_seventh_model(x, y, x_test, y_test):
     for column in columns:
         mean = x[column].mean()
         x = x.fillna(value={column: mean})
-    x_scaled_array = MinMaxScaler().fit_transform(x)
-    x_scaled = pd.DataFrame(x_scaled_array, columns=x.columns)
 
     columns = x_test.columns
     for column in columns:
         mean = x_test[column].mean()
         x_test = x_test.fillna(value={column: mean})
-    x_test_scaled_array = MinMaxScaler().fit_transform(x_test)
-    x_test_scaled = pd.DataFrame(x_test_scaled_array, columns=x_test.columns)
-    return build_model(x_scaled, y, x_test_scaled, y_test, 0.3)
+
+    pipeline = Pipeline(memory=None,
+                        steps=[
+                            ('scaling', MinMaxScaler()),
+                            ('model', LogisticRegression(random_state=1))
+                        ],
+                        verbose=False
+                        )
+    return check_pipeline(x, y, x_test, y_test, pipeline)
 
 
 # Задание 8
@@ -192,18 +223,21 @@ def find_best_split(x, y, x_test, y_test):
         for column in columns:
             median = x2[column].median()
             x2 = x2.fillna(value={column: median})
-        x_scaled_array = MinMaxScaler().fit_transform(x2)
-        x_scaled = pd.DataFrame(x_scaled_array, columns=columns)
 
         x2_test = x_test.copy()
         columns = x2_test.columns
         for column in columns:
             median = x2_test[column].median()
             x2_test = x2_test.fillna(value={column: median})
-        x_test_scaled_array = MinMaxScaler().fit_transform(x2_test)
-        x_test_scaled = pd.DataFrame(x_test_scaled_array, columns=columns)
 
-        score1, score2 = build_model(x_scaled, y, x_test_scaled, y_test, test_size)
+        pipeline = Pipeline(memory=None,
+                            steps=[
+                                ('scaling', MinMaxScaler()),
+                                ('model', LogisticRegression(random_state=1))
+                            ],
+                            verbose=False
+                            )
+        score1,score2 = check_pipeline(x2, y, x2_test, y_test, pipeline, test_size)
         test_sizes.append(int(test_size * x_count))
         scores1.append(score1)
         scores2.append(score2)
