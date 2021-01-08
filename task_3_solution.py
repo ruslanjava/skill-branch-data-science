@@ -4,7 +4,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LinearRegression
-from sklearn.metrics import mean_absolute_error, mean_squared_error
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
 # Задание 1.
 # Для начала, попробуем разбить данные на обучающую часть и валидационную часть в соотношении 70 / 30 и
@@ -59,7 +59,7 @@ def prepare_data_for_model(x, transformer):
 # Создать функцию `fit_first_linear_model`, которая принимает на вход `x_train` и `y_train`, а возвращает модельку.
 def fit_first_linear_model(x_train, y_train):
     x_train_scaled = scale_data(x_train, StandardScaler())
-    model = LinearRegression(fit_intercept=False, normalize=False)
+    model = LinearRegression()
     model.fit(x_train_scaled, y_train)
     return model
 
@@ -68,7 +68,7 @@ def fit_first_linear_model(x_train, y_train):
 # выполнить задание 5, но с использованием `MinMaxScaler`.
 def fit_first_linear_model_2(x_train, y_train):
     x_train_scaled = scale_data(x_train, MinMaxScaler())
-    model = LinearRegression(l_p_metric=2, num_epochs=200)
+    model = LinearRegression()
     model.fit(x_train_scaled, y_train)
     return model
 
@@ -82,8 +82,8 @@ def evaluate_model(linreg, x_test, y_test):
     y_pred = linreg.predict(x_test)
     mse = mean_squared_error(y_test, y_pred)
     mae = mean_absolute_error(y_test, y_pred)
-    rmse = np.sqrt(mse)
-    return [mse.round(2), mae.round(2), rmse.round(2)]
+    r2 = r2_score(y_test, y_pred)
+    return [round(mse, 2), round(mae, 2), round(r2, 2)]
 
 
 # Задание 8
