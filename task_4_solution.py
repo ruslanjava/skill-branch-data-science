@@ -205,7 +205,7 @@ def find_best_split(x, y, x_test, y_test):
         test_sizes.append(test_size)
         scores1.append(score1)
         scores2.append(score2)
-    return pd.DataFrame({'Test_sizes': test_sizes, 'Score1': scores1, 'Score2': scores2})
+    return pd.DataFrame({'Test_size': test_sizes, 'Score1': scores1, 'Score2': scores2})
 
 
 # Задание 9
@@ -217,15 +217,15 @@ def choose_best_split(scores):
     best_test_size = -1
     best_diff = 0
     for index, row in scores.iterrows():
-        score1 = row['score1']
-        score2 = row['score2']
+        score1 = row['Score1']
+        score2 = row['Score2']
         diff = (score1 - score2)**2
 
         if best_test_size == -1:
-            best_test_size = row['test_size']
+            best_test_size = row['Test_size']
             best_diff = diff
         else:
             if diff < best_diff:
-                best_test_size = row['test_size']
+                best_test_size = row['Test_size']
                 best_diff = diff
     return best_test_size
