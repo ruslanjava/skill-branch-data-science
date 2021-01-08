@@ -184,6 +184,8 @@ def find_best_split(x, y, x_test, y_test):
     scores1 = []
     scores2 = []
 
+    x_count = x.shape[0]
+
     for test_size in np.arange(0.1, 1.0, 0.1):
         columns = x.columns
         x2 = x.copy()
@@ -202,7 +204,7 @@ def find_best_split(x, y, x_test, y_test):
         x_test_scaled = pd.DataFrame(x_test_scaled_array, columns=columns)
 
         score1, score2 = build_model(x_scaled, y, x_test_scaled, y_test, test_size)
-        test_sizes.append(test_size)
+        test_sizes.append(int(test_size * x_count))
         scores1.append(score1)
         scores2.append(score2)
     return pd.DataFrame({'Test_size': test_sizes, 'Score1': scores1, 'Score2': scores2})
@@ -228,4 +230,4 @@ def choose_best_split(scores):
             if diff < best_diff:
                 best_test_size = row['Test_size']
                 best_diff = diff
-    return best_test_size
+    return int(best_test_size)
